@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#2E7D32</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/navya_animated_logo</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.Navya</item>
+        
+        <!-- Force Status Bar during splash -->
+        <item name="android:statusBarColor">#121212</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.Navya" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Force Dark Status Bar globally -->
+        <item name="android:statusBarColor">#121212</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Switch back to AppCompat for better Razorpay support -->
+    <style name="Theme.Navya.Razorpay" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        
+        <item name="colorPrimary">#2E7D32</item>
+        <item name="colorPrimaryDark">#2E7D32</item>
+        <item name="colorAccent">#2E7D32</item>
+        
+        <item name="android:colorPrimary">#2E7D32</item>
+        <item name="android:colorPrimaryDark">#2E7D32</item>
+        <item name="android:colorAccent">#2E7D32</item>
+        
+        <item name="android:statusBarColor">#2E7D32</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/white</item>
+    </style>
+</resources>
