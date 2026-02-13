@@ -1,5 +1,6 @@
 package com.example.navya.ui.screens.reminders
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,8 +29,48 @@ fun RemindersScreen(navController: NavController, viewModel: RemindersViewModel 
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
 
-
         var selectedFilter by remember { mutableStateOf("All") }
+
+        val context = LocalContext.current
+        var hasNotificationPermission by remember {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        mutableStateOf(
+                                androidx.core.content.ContextCompat.checkSelfPermission(
+                                        context,
+                                        android.Manifest.permission.POST_NOTIFICATIONS
+                                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                        )
+                } else {
+                        mutableStateOf(true)
+                }
+        }
+
+        val permissionLauncher =
+                rememberLauncherForActivityResult(
+                        contract =
+                                androidx.activity.result.contract.ActivityResultContracts
+                                        .RequestPermission(),
+                        onResult = { isGranted: Boolean ->
+                                hasNotificationPermission = isGranted
+                                if (!isGranted) {
+                                        scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                        "Notifications needed for water reminders"
+                                                )
+                                        }
+                                }
+                        }
+                )
+
+        LaunchedEffect(Unit) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        if (!hasNotificationPermission) {
+                                permissionLauncher.launch(
+                                        android.Manifest.permission.POST_NOTIFICATIONS
+                                )
+                        }
+                }
+        }
 
         LaunchedEffect(uiState.message) {
                 uiState.message?.let {
@@ -38,7 +80,6 @@ fun RemindersScreen(navController: NavController, viewModel: RemindersViewModel 
                         }
                 }
         }
-
 
         androidx.activity.compose.BackHandler {
                 navController.navigate("home_screen") {
@@ -206,8 +247,7 @@ fun RemindersScreen(navController: NavController, viewModel: RemindersViewModel 
                                                         Box(contentAlignment = Alignment.Center) {
                                                                 Icon(
                                                                         imageVector =
-                                                                                Icons.Default
-                                                                                        .Check,
+                                                                                Icons.Default.Check,
                                                                         contentDescription = null,
                                                                         modifier =
                                                                                 Modifier.size(
@@ -250,91 +290,90 @@ fun RemindersScreen(navController: NavController, viewModel: RemindersViewModel 
                                         }
                                 }
                         } else {
-                            val errorColor = colorScheme.error
-                            val tertiaryColor = colorScheme.tertiary
-                            val primaryColor = colorScheme.primary
+                                val errorColor = colorScheme.error
+                                val tertiaryColor = colorScheme.tertiary
+                                val primaryColor = colorScheme.primary
 
-                            LazyColumn(
-                                contentPadding =
-                                    PaddingValues(
-                                        bottom = 80.dp,
-                                        start = 16.dp,
-                                        end = 16.dp
-                                    ),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                fun renderSection(
-                                    title: String,
-                                    items: List<ReminderUiItem>,
-                                    headerColor: Color
+                                LazyColumn(
+                                        contentPadding =
+                                                PaddingValues(
+                                                        bottom = 80.dp,
+                                                        start = 16.dp,
+                                                        end = 16.dp
+                                                ),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
-                                    if (items.isNotEmpty() &&
-                                        (selectedFilter == "All" ||
-                                                selectedFilter == title ||
-                                                (selectedFilter ==
-                                                        "Upcoming" &&
-                                                        title ==
-                                                        "Upcoming") ||
-                                                (selectedFilter ==
-                                                        "Overdue" &&
-                                                        title ==
-                                                        "Overdue") ||
-                                                (selectedFilter ==
-                                                        "Today" &&
-                                                        title == "Today"))
-                                    ) {
-                                        item {
-                                            Text(
-                                                title,
-                                                style =
-                                                    MaterialTheme
-                                                        .typography
-                                                        .titleMedium,
-                                                color = headerColor,
-                                                fontWeight =
-                                                    FontWeight.Bold,
-                                                modifier =
-                                                    Modifier.padding(
-                                                        top = 16.dp,
-                                                        bottom =
-                                                            8.dp
-                                                    )
-                                            )
+                                        fun renderSection(
+                                                title: String,
+                                                items: List<ReminderUiItem>,
+                                                headerColor: Color
+                                        ) {
+                                                if (items.isNotEmpty() &&
+                                                                (selectedFilter == "All" ||
+                                                                        selectedFilter == title ||
+                                                                        (selectedFilter ==
+                                                                                "Upcoming" &&
+                                                                                title ==
+                                                                                        "Upcoming") ||
+                                                                        (selectedFilter ==
+                                                                                "Overdue" &&
+                                                                                title ==
+                                                                                        "Overdue") ||
+                                                                        (selectedFilter ==
+                                                                                "Today" &&
+                                                                                title == "Today"))
+                                                ) {
+                                                        item {
+                                                                Text(
+                                                                        title,
+                                                                        style =
+                                                                                MaterialTheme
+                                                                                        .typography
+                                                                                        .titleMedium,
+                                                                        color = headerColor,
+                                                                        fontWeight =
+                                                                                FontWeight.Bold,
+                                                                        modifier =
+                                                                                Modifier.padding(
+                                                                                        top = 16.dp,
+                                                                                        bottom =
+                                                                                                8.dp
+                                                                                )
+                                                                )
+                                                        }
+                                                        items(items) { item ->
+                                                                ReminderCard(
+                                                                        plantName = item.plantName,
+                                                                        snippet = item.snippet,
+                                                                        timeLabel = item.timeLabel,
+                                                                        isOverdue = item.isOverdue,
+                                                                        onWater = {
+                                                                                viewModel
+                                                                                        .markWatered(
+                                                                                                item
+                                                                                        )
+                                                                        },
+                                                                        onSnooze = {
+                                                                                viewModel.snooze(
+                                                                                        item
+                                                                                )
+                                                                        },
+                                                                        onCancel = {
+                                                                                viewModel
+                                                                                        .cancelReminder(
+                                                                                                item
+                                                                                        )
+                                                                        },
+                                                                        imageUrl = item.plantImage
+                                                                )
+                                                        }
+                                                }
                                         }
-                                        items(items) { item ->
-                                            ReminderCard(
-                                                plantName = item.plantName,
-                                                snippet = item.snippet,
-                                                timeLabel = item.timeLabel,
-                                                isOverdue = item.isOverdue,
-                                                onWater = {
-                                                    viewModel
-                                                        .markWatered(
-                                                            item
-                                                        )
-                                                },
-                                                onSnooze = {
-                                                    viewModel.snooze(
-                                                        item
-                                                    )
-                                                },
-                                                onCancel = {
-                                                    viewModel
-                                                        .cancelReminder(
-                                                            item
-                                                        )
-                                                },
-                                                imageUrl =
-                                                    item.plantImage
-                                            )
-                                        }
-                                    }
-                                }
 
-                                renderSection("Overdue", uiState.overdue, errorColor)
-                                renderSection("Today", uiState.today, tertiaryColor)
-                                renderSection("Upcoming", uiState.upcoming, primaryColor)
-                            }
+                                        renderSection("Overdue", uiState.overdue, errorColor)
+                                        renderSection("Today", uiState.today, tertiaryColor)
+                                        renderSection("Upcoming", uiState.upcoming, primaryColor)
+                                }
                         }
                 }
         }

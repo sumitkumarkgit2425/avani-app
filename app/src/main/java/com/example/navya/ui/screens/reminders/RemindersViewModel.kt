@@ -56,6 +56,12 @@ constructor(
         _uiState.value = _uiState.value.copy(isLoading = true)
 
         viewModelScope.launch {
+            try {
+                reminderRepository.syncReminders(userId)
+            } catch (e: Exception) {}
+        }
+
+        viewModelScope.launch {
             combine(
                             reminderRepository.getRemindersForUser(userId),
                             navyaRepository.getPlants(),
@@ -64,7 +70,7 @@ constructor(
                 val now = System.currentTimeMillis()
 
                 val items =
-                        reminders.mapNotNull { reminder ->
+                        reminders.distinctBy { it.plant_id }.mapNotNull { reminder ->
                             val plant = plants.find { it.id == reminder.plant_id }
                             if (plant != null) {
                                 val diffMillis = (reminder.next_reminder_at ?: 0) - now

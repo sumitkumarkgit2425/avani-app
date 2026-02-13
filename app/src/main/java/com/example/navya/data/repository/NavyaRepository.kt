@@ -186,6 +186,7 @@ constructor(
                         val ownedEntities =
                                 ownedDtos.map { dto ->
                                         com.example.navya.data.local.entity.OwnedPlantEntity(
+                                                id = "owned_${dto.user_id}_${dto.plant_id}",
                                                 user_id = dto.user_id,
                                                 plant_id = dto.plant_id,
                                                 purchase_date = dto.purchase_date
@@ -217,6 +218,7 @@ constructor(
                 try {
                         ownedPlantDao.insertOwnedPlant(
                                 com.example.navya.data.local.entity.OwnedPlantEntity(
+                                        id = "owned_${userId}_${plantId}",
                                         user_id = userId,
                                         plant_id = plantId
                                 )

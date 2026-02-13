@@ -25,8 +25,10 @@ fun MyPlantsScreen(navController: NavController, viewModel: MyPlantsViewModel = 
     val isLoading by viewModel.isLoading.collectAsState()
 
     Scaffold(
+            contentWindowInsets = WindowInsets(0.dp),
             topBar = {
                 TopAppBar(
+                        windowInsets = WindowInsets(0.dp),
                         title = { Text("My Plants", fontWeight = FontWeight.Bold) },
                         navigationIcon = {
                             IconButton(onClick = { navController.popBackStack() }) {

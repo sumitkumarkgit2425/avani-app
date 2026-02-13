@@ -59,8 +59,7 @@ constructor(
             val remoteReminders = apiService.getReminders("eq.$userId")
             val entities = remoteReminders.map { it.toEntity() }
             reminderDao.insertAll(entities)
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) {}
     }
 
     override suspend fun setReminder(
@@ -79,7 +78,7 @@ constructor(
         val nextTime = System.currentTimeMillis() + delayMillis
 
         val existingReminder = reminderDao.getReminderSync(plantId)
-        val reminderId = existingReminder?.id ?: java.util.UUID.randomUUID().toString()
+        val reminderId = existingReminder?.id ?: "reminder_${userId}_${plantId}"
         val lastWatered = existingReminder?.last_watered_at ?: System.currentTimeMillis()
 
         val reminder =
@@ -94,23 +93,23 @@ constructor(
         reminderDao.insertReminder(reminder)
 
         scheduleWorker(plantId, plantName, delayMillis)
-        
+
         try {
-             val dto = com.example.navya.data.models.ReminderDto(
-                  id = reminder.id,
-                  user_id = userId,
-                  plant_id = plantId,
-                  interval_days = intervalDays,
-                  last_watered_at = reminder.last_watered_at,
-                  next_reminder_at = reminder.next_reminder_at
-             )
-             if (existingReminder != null) {
-                 apiService.updateReminder("eq.${reminder.id}", dto)
-             } else {
-                 apiService.addReminder(dto)
-             }
-        } catch (e: Exception) {
-        }
+            val dto =
+                    com.example.navya.data.models.ReminderDto(
+                            id = reminder.id,
+                            user_id = userId,
+                            plant_id = plantId,
+                            interval_days = intervalDays,
+                            last_watered_at = reminder.last_watered_at,
+                            next_reminder_at = reminder.next_reminder_at
+                    )
+            if (existingReminder != null) {
+                apiService.updateReminder("eq.${reminder.id}", dto)
+            } else {
+                apiService.addReminder(dto)
+            }
+        } catch (e: Exception) {}
     }
 
     override suspend fun markAsWatered(reminder: ReminderEntity, plantName: String) {
@@ -129,18 +128,19 @@ constructor(
         reminderDao.insertReminder(updated)
 
         scheduleWorker(reminder.plant_id, plantName, delayMillis)
-        
+
         try {
-             val dto = com.example.navya.data.models.ReminderDto(
-                  id = updated.id,
-                  user_id = updated.user_id,
-                  plant_id = updated.plant_id,
-                  interval_days = updated.interval_days,
-                  last_watered_at = updated.last_watered_at,
-                  next_reminder_at = updated.next_reminder_at
-             )
-             apiService.updateReminder("eq.${updated.id}", dto)
-        } catch (e: Exception) { }
+            val dto =
+                    com.example.navya.data.models.ReminderDto(
+                            id = updated.id,
+                            user_id = updated.user_id,
+                            plant_id = updated.plant_id,
+                            interval_days = updated.interval_days,
+                            last_watered_at = updated.last_watered_at,
+                            next_reminder_at = updated.next_reminder_at
+                    )
+            apiService.updateReminder("eq.${updated.id}", dto)
+        } catch (e: Exception) {}
     }
 
     override suspend fun snoozeReminder(
@@ -170,7 +170,7 @@ constructor(
         reminderDao.deleteReminder(plantId)
         workManager.cancelUniqueWork("reminder_$plantId")
         try {
-            apiService.deleteReminder("eq.$plantId") 
+            apiService.deleteReminder("eq.$plantId")
         } catch (e: Exception) {}
     }
 
@@ -178,6 +178,5 @@ constructor(
         scheduleWorker(plantId, plantName, 100L)
     }
 
-    override suspend fun triggerAllRemindersNow() {
-    }
+    override suspend fun triggerAllRemindersNow() {}
 }

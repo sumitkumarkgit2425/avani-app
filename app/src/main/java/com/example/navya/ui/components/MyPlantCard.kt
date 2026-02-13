@@ -21,7 +21,7 @@ import com.example.navya.data.local.entity.PlantEntity
 fun MyPlantCard(plant: PlantEntity, onClick: (PlantEntity) -> Unit, modifier: Modifier = Modifier) {
         ElevatedCard(
                 onClick = { onClick(plant) },
-                modifier = modifier.fillMaxWidth().padding(8.dp),
+                modifier = modifier.fillMaxWidth(),
                 colors =
                         CardDefaults.elevatedCardColors(
                                 containerColor = MaterialTheme.colorScheme.surface
@@ -30,13 +30,10 @@ fun MyPlantCard(plant: PlantEntity, onClick: (PlantEntity) -> Unit, modifier: Mo
                 shape = RoundedCornerShape(16.dp)
         ) {
                 Column {
-
                         Box(
                                 modifier =
                                         Modifier.fillMaxWidth()
-                                                .aspectRatio(
-                                                        1f
-                                                )
+                                                .aspectRatio(1f)
                                                 .background(MaterialTheme.colorScheme.surface)
                         ) {
                                 SubcomposeAsyncImage(
@@ -92,8 +89,7 @@ fun MyPlantCard(plant: PlantEntity, onClick: (PlantEntity) -> Unit, modifier: Mo
                                         }
                                 )
                         }
-
-                        Column(modifier = Modifier.padding(12.dp)) {
+                        Column(modifier = Modifier.padding(10.dp)) {
                                 Text(
                                         text = plant.name,
                                         style =
@@ -124,12 +120,10 @@ fun MyPlantCard(plant: PlantEntity, onClick: (PlantEntity) -> Unit, modifier: Mo
                                                         containerColor =
                                                                 MaterialTheme.colorScheme
                                                                         .primaryContainer,
-
                                                         contentColor =
                                                                 MaterialTheme.colorScheme
                                                                         .onPrimaryContainer
-
-                                                        ),
+                                                ),
                                         shape = RoundedCornerShape(50),
                                         contentPadding = PaddingValues(0.dp)
                                 ) {

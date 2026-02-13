@@ -6,21 +6,23 @@ import com.example.navya.data.local.entity.PlantEntity
 import com.example.navya.data.repository.AuthRepository
 import com.example.navya.data.repository.NavyaRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
-class MyPlantsViewModel @Inject constructor(
-    private val navyaRepository: NavyaRepository,
-    private val authRepository: AuthRepository
+class MyPlantsViewModel
+@Inject
+constructor(
+        private val navyaRepository: NavyaRepository,
+        private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _ownedPlants = MutableStateFlow<List<PlantEntity>>(emptyList())
     val ownedPlants: StateFlow<List<PlantEntity>> = _ownedPlants.asStateFlow()
-    
+
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -34,7 +36,7 @@ class MyPlantsViewModel @Inject constructor(
             val user = authRepository.getCurrentUser()
             if (user != null) {
                 navyaRepository.fetchOwnedPlants(user.uid).collect { plants ->
-                    _ownedPlants.value = plants
+                    _ownedPlants.value = plants.distinctBy { it.id }
                     _isLoading.value = false
                 }
             } else {
