@@ -1,5 +1,6 @@
-Avani App demo video availabe on linkedin 
-https://www.linkedin.com/posts/sumit-kumar-kushwaha-125634295_androiddev-kotlin-jetpackcompose-activity-7427761626084356096-MIBA?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAEd2Zq0BizkKXBPqRv3lS4bQ-JlqM00PTaA
+📺 Live Demonstration & System Walkthrough
+
+Uploading Navya app demo (1).mp4…
 
 splash screen
 ![Screenshot_2026-02-13-17-42-12-39_8ae8db1ae42fa02050058753f53f425d](https://github.com/user-attachments/assets/1ba145b4-54eb-4c43-8fd2-7ded9fd34dde)
