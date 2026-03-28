@@ -1,6 +1,6 @@
 📺 Live Demonstration & System Walkthrough
 
-Uploading Navya app demo (1).mp4…
+https://github.com/user-attachments/assets/bbcd99fb-a682-4d2b-9b41-b8c026176346
 
 splash screen
 ![Screenshot_2026-02-13-17-42-12-39_8ae8db1ae42fa02050058753f53f425d](https://github.com/user-attachments/assets/1ba145b4-54eb-4c43-8fd2-7ded9fd34dde)
